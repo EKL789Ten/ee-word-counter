@@ -1,0 +1,6 @@
+# Cloudflare Pages redirects
+# Docs: https://developers.cloudflare.com/pages/configuration/redirects/
+
+# (Add custom redirects here as needed. The site is a single page so none
+# are required by default. Example:)
+# /old-url /new-url 301

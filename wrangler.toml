@@ -1,0 +1,12 @@
+# wrangler.toml — optional Pages project config.
+# Not required if you run `wrangler pages deploy <dir>` with --project-name,
+# but keeping this file makes `wrangler pages dev` and CI runs reproducible.
+
+name = "ee-word-counter"              # <-- CF_PAGES_PROJECT placeholder
+compatibility_date = "2026-04-21"
+pages_build_output_dir = "."
+
+# If you later add Pages Functions (serverless handlers), point this at their
+# directory; for the current static build it's not used.
+# [functions]
+# directory = "functions"

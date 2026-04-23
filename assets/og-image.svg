@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f7f5ef"/>
+      <stop offset="1" stop-color="#efece3"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <g fill="none" stroke="#1a3a6c" stroke-width="3" stroke-linecap="round">
+    <rect x="80" y="120" width="120" height="120" rx="18"/>
+    <path d="M110 155h60M110 185h45M110 215h60"/>
+  </g>
+  <text x="80" y="340" font-family="Georgia, 'Source Serif 4', serif" font-size="84" font-weight="500" fill="#1d1c18">Count your EE</text>
+  <text x="80" y="430" font-family="Georgia, 'Source Serif 4', serif" font-size="84" font-weight="500" fill="#1a3a6c">the way the examiner does.</text>
+  <text x="80" y="520" font-family="Inter, sans-serif" font-size="28" fill="#5b574e">Rules-aware IB Extended Essay counter · 100% in your browser</text>
+  <g stroke="#c5bfae" stroke-width="1">
+    <line x1="80" y1="560" x2="1120" y2="560"/>
+  </g>
+  <text x="80" y="595" font-family="Inter, sans-serif" font-size="20" fill="#5b574e" letter-spacing="3">EE COUNTER · NO UPLOADS · NO SIGN-UP</text>
+</svg>

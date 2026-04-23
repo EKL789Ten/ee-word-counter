@@ -1,0 +1,590 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+    <title>IB Extended Essay Word Counter — rules-aware, 100% in your browser</title>
+    <meta
+      name="description"
+      content="A rules-aware IB Extended Essay word counter. Automatically excludes footnotes, bibliography, appendix, tables and equations the way the IB EE guide requires. Paste text or upload a .docx — nothing leaves your browser."
+    />
+    <meta name="robots" content="index,follow" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#1a3a6c" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#141312" media="(prefers-color-scheme: dark)" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="IB Extended Essay Word Counter" />
+    <meta
+      property="og:description"
+      content="A rules-aware IB EE counter that excludes footnotes, bibliography, appendix, tables and equations — entirely in your browser."
+    />
+    <meta property="og:image" content="assets/og-image.svg" />
+    <meta property="og:site_name" content="EE Word Counter" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="mask-icon" href="assets/favicon.svg" color="#1a3a6c" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="css/style.css" />
+
+    <!-- JSON-LD — SoftwareApplication -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "IB Extended Essay Word Counter",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Web",
+        "offers": { "@type": "Offer", "price": "0" },
+        "description": "Rules-aware word counter for the IB Diploma Extended Essay. Excludes footnotes, bibliography, appendix, tables and equations per the EE guide. Runs entirely in your browser.",
+        "inLanguage": "en"
+      }
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to main content</a>
+
+    <header class="site-header" role="banner">
+      <div class="container">
+        <a class="brand" href="/" aria-label="EE Word Counter — home">
+          <span class="brand__mark" aria-hidden="true">
+            <!-- Logo mark: an inkwell-style "EE" glyph -->
+            <svg width="34" height="34" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="EE Word Counter logo">
+              <rect x="3" y="3" width="34" height="34" rx="6" stroke="currentColor" />
+              <path d="M11 13h8M11 20h6M11 27h8" />
+              <path d="M23 13h6M23 20h4M23 27h6" stroke-dasharray="1 2" opacity="0.7" />
+            </svg>
+          </span>
+          <span class="brand__name">EE&nbsp;Counter</span>
+          <span class="brand__tag" aria-hidden="true">Rules-aware</span>
+        </a>
+        <div class="header-actions">
+          <a class="icon-button" href="#rules" aria-label="What's counted, what's excluded">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          </a>
+          <button class="icon-button" type="button" data-theme-toggle aria-label="Switch to dark mode" aria-pressed="false"></button>
+        </div>
+      </div>
+    </header>
+
+    <main id="main">
+      <!-- HERO -->
+      <section class="hero">
+        <div class="container">
+          <span class="hero__eyebrow">IB Diploma · Extended Essay</span>
+          <h1 class="hero__title">Count your EE the way the examiner does.</h1>
+          <p class="hero__lede">
+            Microsoft Word doesn't know the IB EE rules. This counter does —
+            it automatically subtracts footnotes, bibliography, appendices, tables
+            and equations so you know your true word count against the
+            <strong>4,000-word limit</strong>.
+          </p>
+          <ul class="hero__meta" role="list">
+            <li><strong>No upload.</strong> Your essay never leaves this browser tab.</li>
+            <li><strong>No sign-up.</strong> No account, no tracking.</li>
+            <li><strong>Paste text</strong> or <strong>upload a .docx</strong>.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- COUNTER -->
+      <section class="counter" aria-label="Word counter">
+        <div class="container">
+          <div class="counter__grid">
+            <!-- LEFT column: inputs -->
+            <div>
+              <div class="tablist" role="tablist" aria-label="Input method">
+                <button role="tab" id="tab-paste" aria-controls="panel-paste" aria-selected="true" tabindex="0" type="button">Paste text</button>
+                <button role="tab" id="tab-upload" aria-controls="panel-upload" aria-selected="false" tabindex="-1" type="button">Upload .docx</button>
+              </div>
+
+              <!-- Paste panel -->
+              <section id="panel-paste" role="tabpanel" aria-labelledby="tab-paste" class="card">
+                <h2 class="card__title">Paste your essay</h2>
+                <p class="card__desc">
+                  Headings the tool recognises: <em>Bibliography</em>, <em>References</em>, <em>Works Cited</em>, <em>Appendix</em>, <em>Acknowledgements</em>, <em>Abstract</em>, <em>Contents</em>, <em>Footnotes</em>.
+                  Block quotes use <code>&gt;</code>. Equations can use <code>$…$</code>, <code>$$…$$</code>, or <code>\[…\]</code>.
+                </p>
+                <label class="textarea-label" for="essay-input">Your essay text</label>
+                <span class="textarea-hint" id="paste-char-count">0 characters</span>
+                <textarea
+                  id="essay-input"
+                  class="textarea"
+                  placeholder="Paste your full essay here, including section headings like 'Bibliography' or 'Appendix A'. The counter will detect and handle those sections for you."
+                  aria-describedby="paste-char-count"
+                  spellcheck="false"
+                ></textarea>
+
+                <div class="actions">
+                  <button type="button" class="btn btn--primary" id="open-examiner">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    Examiner view
+                  </button>
+                  <button type="button" class="btn btn--ghost" id="open-suggestions">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    Suggest cuts
+                  </button>
+                </div>
+              </section>
+
+              <!-- Upload panel -->
+              <section id="panel-upload" role="tabpanel" aria-labelledby="tab-upload" class="card" hidden>
+                <h2 class="card__title">Upload a .docx</h2>
+                <p class="card__desc">
+                  Your file is parsed locally with JSZip — no network request is made.
+                  Word footnotes, tables, equations, and paragraphs styled as <em>Bibliography</em> are detected from the document's XML.
+                </p>
+
+                <div
+                  id="dropzone"
+                  class="dropzone"
+                  role="button"
+                  tabindex="0"
+                  aria-label="Click or drop a .docx file here"
+                >
+                  <svg class="dropzone__icon" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="17 8 12 3 7 8"/>
+                    <line x1="12" y1="3" x2="12" y2="15"/>
+                  </svg>
+                  <span class="dropzone__primary">Drop your .docx here</span>
+                  <span>or click to choose a file</span>
+                  <p class="dropzone__meta">Parsed 100% in your browser. Nothing is uploaded anywhere.</p>
+                </div>
+                <input type="file" id="file-input" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" class="sr-only" />
+                <p class="dropzone__status" id="drop-status" role="status" aria-live="polite"></p>
+              </section>
+
+              <!-- Exclusion toggles -->
+              <section class="card" aria-labelledby="exclusion-title">
+                <h2 class="card__title" id="exclusion-title">What to exclude</h2>
+                <p class="card__desc">
+                  Defaults follow the <a href="https://ibo.org" rel="noopener">IB Extended Essay guide</a> —
+                  footnotes, bibliography, appendices and equations are excluded; tables and block quotes count toward your total.
+                </p>
+                <fieldset class="fieldset">
+                  <legend class="sr-only">Sections to exclude from the word count</legend>
+                  <label class="toggle">
+                    <input type="checkbox" data-exclude="footnotes" />
+                    <span>
+                      <span class="toggle__label">Footnotes &amp; endnotes</span>
+                      <span class="toggle__hint">Excluded — unless used for substantive argument.</span>
+                    </span>
+                  </label>
+                  <label class="toggle">
+                    <input type="checkbox" data-exclude="bibliography" />
+                    <span>
+                      <span class="toggle__label">Bibliography / References</span>
+                      <span class="toggle__hint">Always excluded.</span>
+                    </span>
+                  </label>
+                  <label class="toggle">
+                    <input type="checkbox" data-exclude="appendix" />
+                    <span>
+                      <span class="toggle__label">Appendices</span>
+                      <span class="toggle__hint">Excluded — examiners are not required to read these.</span>
+                    </span>
+                  </label>
+                  <label class="toggle">
+                    <input type="checkbox" data-exclude="acknowledgements" />
+                    <span>
+                      <span class="toggle__label">Acknowledgements</span>
+                      <span class="toggle__hint">Excluded.</span>
+                    </span>
+                  </label>
+                  <label class="toggle">
+                    <input type="checkbox" data-exclude="contents" />
+                    <span>
+                      <span class="toggle__label">Table of contents</span>
+                      <span class="toggle__hint">Excluded.</span>
+                    </span>
+                  </label>
+                  <label class="toggle">
+                    <input type="checkbox" data-exclude="abstract" />
+                    <span>
+                      <span class="toggle__label">Abstract (legacy)</span>
+                      <span class="toggle__hint">Removed from EE in 2018. Exclude if present.</span>
+                    </span>
+                  </label>
+                  <label class="toggle">
+                    <input type="checkbox" data-exclude="equation" />
+                    <span>
+                      <span class="toggle__label">Equations &amp; formulae</span>
+                      <span class="toggle__hint">Excluded — words inside equations don't count.</span>
+                    </span>
+                  </label>
+                  <label class="toggle">
+                    <input type="checkbox" data-exclude="table" />
+                    <span>
+                      <span class="toggle__label">Tables</span>
+                      <span class="toggle__hint">Counted by default. Toggle off for STEM essays heavy on data tables.</span>
+                    </span>
+                  </label>
+                  <label class="toggle">
+                    <input type="checkbox" data-exclude="blockquote" />
+                    <span>
+                      <span class="toggle__label">Block quotes</span>
+                      <span class="toggle__hint">Counted by default. Indented quotes are still yours to justify.</span>
+                    </span>
+                  </label>
+                </fieldset>
+              </section>
+
+              <!-- RPPF companion -->
+              <section class="card" aria-labelledby="rppf-title">
+                <h2 class="card__title" id="rppf-title">RPPF reflection (500-word limit)</h2>
+                <p class="card__desc">
+                  Separate counter for your Reflections on Planning &amp; Progress form —
+                  a common point of confusion with the main EE limit.
+                </p>
+                <label class="textarea-label" for="rppf-input">Your RPPF text</label>
+                <textarea
+                  id="rppf-input"
+                  class="textarea"
+                  style="min-block-size: 140px"
+                  placeholder="Paste your RPPF reflections (all three stages combined).">
+                </textarea>
+                <div style="margin-top: var(--space-4); display: flex; align-items: center; justify-content: space-between; gap: var(--space-4);">
+                  <div style="flex:1; height:6px; background:var(--color-surface-offset); border-radius:var(--radius-full); overflow:hidden;">
+                    <div id="rppf-bar" class="counter-readout__fill" style="inline-size:0%"></div>
+                  </div>
+                  <strong id="rppf-count" style="font-variant-numeric:tabular-nums; font-size: var(--text-sm);">0 / 500</strong>
+                </div>
+                <p id="rppf-status" style="margin-top: var(--space-2); font-size: var(--text-xs); color: var(--color-text-muted);">Draft your RPPF reflection to see your count.</p>
+              </section>
+            </div>
+
+            <!-- RIGHT column: live readout -->
+            <aside class="panel" aria-label="Live word count">
+              <div class="counter-readout" role="region" aria-live="polite" aria-atomic="false">
+                <span class="counter-readout__status counter-readout__status--ok" id="count-status">
+                  <span class="dot" aria-hidden="true"></span>Within limit
+                </span>
+                <div class="counter-readout__big" id="count-big">0</div>
+                <div class="counter-readout__of" id="count-of">of 4,000 word limit</div>
+                <div class="counter-readout__bar" role="progressbar" aria-valuemin="0" aria-valuemax="4000" aria-valuenow="0" aria-label="Word count progress">
+                  <div class="counter-readout__fill" id="count-bar-fill"></div>
+                </div>
+                <p class="counter-readout__delta" id="count-delta">Paste or upload your essay to begin.</p>
+              </div>
+
+              <div class="breakdown">
+                <h3>Breakdown</h3>
+                <dl>
+                  <dt>Body text</dt>
+                  <dd id="bd-body">0</dd>
+
+                  <dt>Footnotes &amp; endnotes<small>excluded by default</small></dt>
+                  <dd id="bd-footnotes">0</dd>
+
+                  <dt>Bibliography<small>always excluded</small></dt>
+                  <dd id="bd-bibliography">0</dd>
+
+                  <dt>Appendix<small>excluded by default</small></dt>
+                  <dd id="bd-appendix">0</dd>
+
+                  <dt>Acknowledgements<small>excluded</small></dt>
+                  <dd id="bd-acknowledgements">0</dd>
+
+                  <dt>Table of contents<small>excluded</small></dt>
+                  <dd id="bd-contents">0</dd>
+
+                  <dt>Abstract (legacy)<small>excluded</small></dt>
+                  <dd id="bd-abstract">0</dd>
+
+                  <dt>Block quotes<small>counted</small></dt>
+                  <dd id="bd-blockquote">0</dd>
+
+                  <dt>Tables<small>counted</small></dt>
+                  <dd id="bd-table">0</dd>
+
+                  <dt>Equations<small>excluded</small></dt>
+                  <dd id="bd-equation">0</dd>
+
+                  <span class="breakdown__divider" aria-hidden="true"></span>
+
+                  <dt class="breakdown__total">Counted toward limit</dt>
+                  <dd id="bd-counted" class="breakdown__total">0</dd>
+
+                  <dt><small>Raw Word-style total (all regions)</small></dt>
+                  <dd id="bd-raw" style="color: var(--color-text-muted); font-weight: 400;">0</dd>
+                </dl>
+              </div>
+
+              <div class="flag" id="flag-footnotes" hidden role="note">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                <div>
+                  <strong>Your footnotes are unusually heavy.</strong> Footnotes
+                  over 25% of body text can signal argument hidden in citations —
+                  review whether any belongs in the body.
+                </div>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <!-- RULES -->
+      <section class="rules" id="rules" aria-labelledby="rules-title">
+        <div class="container rules__grid">
+          <div>
+            <h2 class="rules__title" id="rules-title">What counts, what doesn't</h2>
+            <p class="rules__kicker">A quick reference pulled from the IB Extended Essay guide so you can defend every toggle.</p>
+          </div>
+          <div>
+            <div class="rule-pair">
+              <div class="rule-column rule-column--counts">
+                <h3>Counted toward the 4,000 words</h3>
+                <ul>
+                  <li>The main body of your essay</li>
+                  <li>Introduction, argument, analysis, conclusion</li>
+                  <li>Section and sub-section headings</li>
+                  <li>Tables used as evidence or illustration</li>
+                  <li>Quoted passages within the body</li>
+                  <li>Captions (brief descriptive text under figures)</li>
+                </ul>
+              </div>
+              <div class="rule-column rule-column--excluded">
+                <h3>Excluded from the 4,000 words</h3>
+                <ul>
+                  <li>Title page, contents page, references</li>
+                  <li>Bibliography, works cited, reference list</li>
+                  <li>Footnotes and endnotes (unless substantive)</li>
+                  <li>Appendices</li>
+                  <li>Acknowledgements</li>
+                  <li>Equations, formulae and calculations</li>
+                  <li>Charts, diagrams, images (the visuals themselves)</li>
+                  <li>Maps, labels, data tables (numerical only)</li>
+                </ul>
+              </div>
+            </div>
+            <p class="rule-source">
+              Source: <a href="https://ibo.org" rel="noopener">IB Diploma Extended Essay guide</a>.
+              Examiners are instructed not to read beyond 4,000 words — a fact discussed frequently on
+              <a href="https://www.reddit.com/r/IBO/" rel="noopener">r/IBO</a>. This tool mirrors the guide; it does not speak for the IB.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section class="faq" aria-labelledby="faq-title">
+        <div class="container">
+          <h2 class="faq__title" id="faq-title">Fast answers</h2>
+          <div class="faq-list">
+            <details class="faq-item">
+              <summary>Does the IB really stop marking at 4,000 words?</summary>
+              <p>
+                Yes. The EE guide instructs examiners to read up to the 4,000-word limit and assess
+                nothing beyond it. Your conclusion, final analysis, or final paragraph will not be
+                marked if it falls after word 4,000. Use the Examiner view button above to see
+                exactly where the cutoff lands in your draft.
+              </p>
+            </details>
+            <details class="faq-item">
+              <summary>Do I need an abstract? My school template still has one.</summary>
+              <p>
+                No. The abstract was removed from the Extended Essay requirements in 2018.
+                If a template still includes one, either delete it or paste it under an
+                <em>Abstract</em> heading — this tool will automatically exclude it from your count.
+              </p>
+            </details>
+            <details class="faq-item">
+              <summary>Can I put argument in my footnotes to avoid the word count?</summary>
+              <p>
+                Technically footnotes are excluded — but examiners are trained to check whether a
+                footnote contains substantive argument. The EE guide states that if a footnote
+                carries argument, it <em>is</em> counted, and it may be treated as an attempt to
+                circumvent the word limit. A quick heuristic: footnotes over roughly 25% of your
+                body text is a yellow flag. The tool shows a warning when your draft crosses that
+                ratio.
+              </p>
+            </details>
+            <details class="faq-item">
+              <summary>What exactly is counted in a STEM essay with lots of equations?</summary>
+              <p>
+                Equations and formulae themselves are not counted — numerical and symbolic content
+                doesn't add to your word total. Words <em>inside</em> an equation (e.g.,
+                <code>Force = mass × acceleration</code> written out in prose) do count. The
+                counter excludes standard LaTeX-style equations automatically and treats plain-prose
+                equivalents as body text.
+              </p>
+            </details>
+            <details class="faq-item">
+              <summary>Is my essay sent anywhere?</summary>
+              <p>
+                No. The counter runs entirely in this browser tab using standard client-side JavaScript.
+                The .docx parser uses <a href="https://stuk.github.io/jszip/" rel="noopener">JSZip</a>
+                to read your file in-memory; no network request is made. You can verify this by opening
+                your browser's developer tools and watching the Network tab while you upload. Close
+                the tab and your essay is gone from memory.
+              </p>
+            </details>
+            <details class="faq-item">
+              <summary>What if my word count is 4,010 — is that really over?</summary>
+              <p>
+                Yes. The IB enforces 4,000 as an absolute cap. Even one word over means an examiner
+                is instructed to stop. The safe target is 3,950 or below, which gives you a buffer
+                for any counting edge cases (differences between Word, Google Docs, and the IB's
+                own internal tools).
+              </p>
+            </details>
+            <details class="faq-item">
+              <summary>What tool does the IB actually use to count?</summary>
+              <p>
+                The IB has not publicly disclosed its exact counting implementation. Word processors
+                vary slightly in how they handle hyphenated words, contractions and numbers.
+                This tool counts tokens the way mainstream word processors do — letters/numbers
+                separated by whitespace — which aligns closely with both Word and the guidelines
+                examiners are given. Bottom line: aim for a comfortable cushion below 4,000.
+              </p>
+            </details>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer" role="contentinfo">
+      <div class="container">
+        <div>
+          <small>
+            Not affiliated with the International Baccalaureate Organization.
+            Built by an EE supervisor who was tired of explaining this every February.
+            <br />
+            <a href="#rules">What counts</a> · <a href="#main">Back to top</a>
+          </small>
+        </div>
+        <span class="privacy-badge" aria-label="Privacy: runs entirely in your browser">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          100% in-browser · nothing uploaded
+        </span>
+      </div>
+    </footer>
+
+    <!-- Dialogs -->
+    <dialog class="dialog" id="examiner-dialog" aria-labelledby="examiner-title">
+      <header class="dialog__header">
+        <h2 class="dialog__title" id="examiner-title">Examiner view — the first 4,000 words</h2>
+        <button type="button" class="icon-button" id="close-examiner" aria-label="Close dialog">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </header>
+      <div class="dialog__body">
+        <div id="examiner-body" class="examiner-view"></div>
+      </div>
+    </dialog>
+
+    <dialog class="dialog" id="suggest-dialog" aria-labelledby="suggest-title">
+      <header class="dialog__header">
+        <h2 class="dialog__title" id="suggest-title">Suggested cuts</h2>
+        <button type="button" class="icon-button" id="close-suggestions" aria-label="Close dialog">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </header>
+      <div class="dialog__body">
+        <p style="color:var(--color-text-muted); font-size: var(--text-sm); margin-bottom: var(--space-5);">
+          These are the <em>lowest-load</em> sentences in your body text, ranked by filler phrases,
+          passive voice, meta self-reference, and length. Advisory only — you decide what to cut.
+        </p>
+        <div id="suggest-body" class="cut-suggestions"></div>
+      </div>
+    </dialog>
+
+    <!-- JSZip (CDN, SRI-pinned). Used for client-side .docx parsing. -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"
+      integrity="sha512-XMVd28F1oH/O71fzwBnV7HucLxVwtxf26XV8P4wPk26EDxuGZ91N8bsOttmnomcCD3CS5ZMRL50H0GgOHvegtg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+      defer
+    ></script>
+    <script src="js/counter.js" defer></script>
+    <script src="js/docx.js" defer></script>
+    <script src="js/suggestions.js" defer></script>
+    <script src="js/app.js" defer></script>
+  <script data-pplx-inline-edit>
+(function(){
+  if(window===window.top)return;
+  function inlineAll(orig,clone){
+    if(orig.nodeType!==1)return;
+    try{
+      var cs=getComputedStyle(orig);
+      var t='';
+      for(var i=0;i<cs.length;i++){t+=cs[i]+':'+cs.getPropertyValue(cs[i])+';';}
+      clone.style.cssText=t;
+    }catch(e){}
+    var oc=orig.children,cc=clone.children;
+    for(var j=0;j<oc.length&&j<cc.length;j++){inlineAll(oc[j],cc[j]);}
+  }
+  function stripExternal(clone){
+    var imgs=clone.querySelectorAll('img');
+    for(var i=0;i<imgs.length;i++){
+      var s=imgs[i].getAttribute('src');
+      if(s&&!s.startsWith('data:'))imgs[i].removeAttribute('src');
+    }
+    var all=clone.querySelectorAll('*');
+    for(var i=0;i<all.length;i++){
+      var st=all[i].style.cssText;
+      if(st&&st.indexOf('url(')>=0){
+        all[i].style.cssText=st.replace(/url\(["']?(?!data:)[^)"']*["']?\)/gi,'none');
+      }
+    }
+  }
+  var scrollRaf=0;
+  function emitScroll(){
+    scrollRaf=0;
+    var x=window.scrollX||window.pageXOffset||0;
+    var y=window.scrollY||window.pageYOffset||0;
+    window.parent.postMessage({type:'INLINE_EDIT_SCROLL',scrollX:x,scrollY:y},'*');
+  }
+  window.addEventListener('scroll',function(){
+    if(scrollRaf)return;
+    scrollRaf=requestAnimationFrame(emitScroll);
+  },{passive:true,capture:true});
+  emitScroll();
+  window.addEventListener('message',function(e){
+    if(!e.data||e.data.type!=='INLINE_EDIT_CAPTURE_REQUEST')return;
+    var scrollX=window.scrollX||window.pageXOffset||0;
+    var scrollY=window.scrollY||window.pageYOffset||0;
+    var w=window.innerWidth,h=window.innerHeight;
+    try{
+      var clone=document.documentElement.cloneNode(true);
+      var rm=clone.querySelectorAll('script,link[rel="stylesheet"],style');
+      for(var i=0;i<rm.length;i++){rm[i].remove();}
+      inlineAll(document.documentElement,clone);
+      stripExternal(clone);
+      var html=new XMLSerializer().serializeToString(clone);
+      var svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+w+'" height="'+h+'">'
+        +'<foreignObject width="100%" height="100%">'
+        +'<div xmlns="http://www.w3.org/1999/xhtml" style="width:'+w+'px;height:'+h+'px;overflow:hidden">'
+        +'<div style="transform:translate(-'+scrollX+'px,-'+scrollY+'px);transform-origin:top left">'
+        +html+'</div></div></foreignObject></svg>';
+      var svgUrl='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+      var img=new Image();
+      img.onload=function(){
+        var c=document.createElement('canvas');c.width=w;c.height=h;
+        c.getContext('2d').drawImage(img,0,0);
+        window.parent.postMessage({type:'INLINE_EDIT_SCREENSHOT_RESULT',dataUrl:c.toDataURL('image/png'),scrollX:scrollX,scrollY:scrollY},'*');
+      };
+      img.onerror=function(){
+        window.parent.postMessage({type:'INLINE_EDIT_SCREENSHOT_RESULT',dataUrl:null,scrollX:scrollX,scrollY:scrollY},'*');
+      };
+      img.src=svgUrl;
+    }catch(err){
+      window.parent.postMessage({type:'INLINE_EDIT_SCREENSHOT_RESULT',dataUrl:null,scrollX:scrollX,scrollY:scrollY},'*');
+    }
+  });
+})();
+</script></body>
+</html>

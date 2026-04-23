@@ -1,0 +1,27 @@
+# Cloudflare Pages custom headers
+# Docs: https://developers.cloudflare.com/pages/configuration/headers/
+
+/*
+  # Lock down iframing, MIME sniffing, and referrer leakage
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()
+
+  # HSTS — enable only once you're sure the custom domain always serves HTTPS.
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+
+  # CSP — tight, reflects exactly what the site loads:
+  #   - Fonts from Google (gstatic)
+  #   - JSZip from cdnjs.cloudflare.com
+  #   - Everything else is self-hosted
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
+
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/css/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/js/*
+  Cache-Control: public, max-age=31536000, immutable
